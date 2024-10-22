@@ -7,12 +7,12 @@ Controller = Controller()
 
 # Motor setup for the left and right sides
 motor_left1 = Motor(PORT1)
-motor_left2 = Motor(PORT2)
-motor_left3 = Motor(PORT3)
+motor_left2 = Motor(PORT9)
 
-motor_right1 = Motor(PORT4, True)  # Reverse polarity for right side
-motor_right2 = Motor(PORT5, True)
-motor_right3 = Motor(PORT6, True)
+
+motor_right1 = Motor(PORT2, True)  # Reverse polarity for right side
+motor_right2 = Motor(PORT10, True)
+
 
 # Competition instance
 competition = Competition()
