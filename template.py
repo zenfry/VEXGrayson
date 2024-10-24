@@ -69,11 +69,11 @@ def drive_control():
     # Set motor velocities
     motor_left1.spin(FORWARD, left_speed, PERCENT)
     motor_left2.spin(FORWARD, left_speed, PERCENT)
-    motor_left3.spin(FORWARD, left_speed, PERCENT)
+    
 
     motor_right1.spin(FORWARD, right_speed, PERCENT)
     motor_right2.spin(FORWARD, right_speed, PERCENT)
-    motor_right3.spin(FORWARD, right_speed, PERCENT)
+   
 
 # Autonomous task function (to be planned)
 def autonomous():
