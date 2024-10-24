@@ -7,21 +7,12 @@ Controller = Controller()
 
 # Motor setup for the left and right sides
 motor_left1 = Motor(PORT1)
-<<<<<<< HEAD
-motor_left2 = Motor(PORT9)
-
-
-motor_right1 = Motor(PORT2, True)  # Reverse polarity for right side
-motor_right2 = Motor(PORT10, True)
-
-=======
 motor_left2 = Motor(PORT2)
 motor_left3 = Motor(PORT3)
 
 motor_right1 = Motor(PORT4, True)  # Reverse polarity for right side
 motor_right2 = Motor(PORT5, True)
 motor_right3 = Motor(PORT6, True)
->>>>>>> ce44aa57805c60c9a3e840591adc4c6101e13b94
 
 # Competition instance
 competition = Competition()
@@ -78,19 +69,11 @@ def drive_control():
     # Set motor velocities
     motor_left1.spin(FORWARD, left_speed, PERCENT)
     motor_left2.spin(FORWARD, left_speed, PERCENT)
-<<<<<<< HEAD
-    
-
-    motor_right1.spin(FORWARD, right_speed, PERCENT)
-    motor_right2.spin(FORWARD, right_speed, PERCENT)
-   
-=======
     motor_left3.spin(FORWARD, left_speed, PERCENT)
 
     motor_right1.spin(FORWARD, right_speed, PERCENT)
     motor_right2.spin(FORWARD, right_speed, PERCENT)
     motor_right3.spin(FORWARD, right_speed, PERCENT)
->>>>>>> ce44aa57805c60c9a3e840591adc4c6101e13b94
 
 # Autonomous task function (to be planned)
 def autonomous():
