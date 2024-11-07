@@ -14,6 +14,9 @@ motor_right1 = Motor(PORT4, True)  # Reverse polarity for right side
 motor_right2 = Motor(PORT5, True)
 motor_right3 = Motor(PORT6, True)
 
+# Motor setup for the arm
+motor_arm = Motor(PORT7)  # Port 7, or any available port for the arm
+
 # Competition instance
 competition = Competition()
 
@@ -75,6 +78,14 @@ def drive_control():
     motor_right2.spin(FORWARD, right_speed, PERCENT)
     motor_right3.spin(FORWARD, right_speed, PERCENT)
 
+# Function for controlling the arm using joystick
+def arm_control():
+    # Use Axis4 (right horizontal stick) for arm control
+    arm_speed = Controller.axis4.position()
+    
+    # Set arm motor velocity based on joystick position
+    motor_arm.spin(FORWARD, arm_speed, PERCENT)
+
 # Autonomous task function (to be planned)
 def autonomous():
     while competition.is_autonomous() and competition.is_enabled():
@@ -84,6 +95,7 @@ def autonomous():
 def driver_control():
     while competition.is_driver_control() and competition.is_enabled():
         drive_control()   # Use joystick to drive the wheels
+        arm_control()     # Use joystick to control the arm
         button_actions()  # Handle button presses
         wait(20, MSEC)
 
