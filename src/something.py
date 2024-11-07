@@ -2,23 +2,21 @@ from vex import *
 
 # Initialize Brain, Inertial, Controller, and Motors
 Brain = Brain()
-InertialSensor = Inertial()
 Controller = Controller()
 
 # Motor setup for the left and right sides
-motor_left1 = Motor(PORT1)
-motor_left2 = Motor(PORT2)
-motor_left3 = Motor(PORT3)
+motor_left1 = Motor(Ports.PORT1)
+motor_left2 = Motor(Ports.PORT2)
+motor_left3 = Motor(Ports.PORT3)
 
-motor_right1 = Motor(PORT4, True)  # Reverse polarity for right side
-motor_right2 = Motor(PORT5, True)
-motor_right3 = Motor(PORT6, True)
+motor_right1 = Motor(Ports.PORT4, True)  # Reverse polarity for right side
+motor_right2 = Motor(Ports.PORT5, True)
+motor_right3 = Motor(Ports.PORT6, True)
 
 # Motor setup for the arm
-motor_arm = Motor(PORT7)  # Port 7, or any available port for the arm
+motor_arm = Motor(Ports.PORT7)  # Port 7, or any available port for the arm
 
 # Competition instance
-competition = Competition()
 
 # Sample variable to demonstrate button actions
 myVariable = 0
@@ -99,10 +97,4 @@ def driver_control():
         button_actions()  # Handle button presses
         wait(20, MSEC)
 
-# Main function to start tasks
-def main():
-    competition.autonomous(autonomous)
-    competition.drivercontrol(driver_control)
-
-# Start the program
-main()
+competition = Competition(driver_control,autonomous)
