@@ -3,7 +3,7 @@ from vex import *
 # Initialize Brain, Controller, Competition, and Motors
 brain = Brain()
 controller = Controller()
-competition = Competition()
+competition = Competition(driver_control, autonomous)
 
 # Motor setup
 motor_left1 = Motor(Ports.PORT1, GearSetting.RATIO_18_1, True)
