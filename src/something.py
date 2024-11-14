@@ -53,7 +53,7 @@ def move_arm(position, speed, duration):
 # Joystick drive control
 def drive_control():
     left_speed = controller.axis3.position()
-    right_speed = controller.axis2.position()
+    right_speed = controller.axis4.position()
     motor_left1.spin(FORWARD, left_speed, PERCENT)
     motor_left2.spin(FORWARD, left_speed, PERCENT)
     motor_right1.spin(FORWARD, right_speed, PERCENT)
@@ -61,7 +61,7 @@ def drive_control():
 
 # Arm joystick control
 def arm_control():
-    arm_speed = controller.axis4.position()
+    arm_speed = controller.axis2.position()
     motor_arm.spin(FORWARD, arm_speed, PERCENT)
 
 # Autonomous routine
