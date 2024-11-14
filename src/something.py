@@ -3,14 +3,13 @@ from vex import *
 # Initialize Brain, Controller, Competition, and Motors
 brain = Brain()
 controller = Controller()
-competition = Competition(driver_control, autonomous)
 
 # Motor setup
-motor_left1 = Motor(Ports.PORT1, GearSetting.RATIO_18_1, True)
-motor_left2 = Motor(Ports.PORT2, GearSetting.RATIO_18_1, True)
-motor_right1 = Motor(Ports.PORT9, GearSetting.RATIO_18_1)
-motor_right2 = Motor(Ports.PORT10, GearSetting.RATIO_18_1)
-motor_arm = Motor(Ports.PORT7, GearSetting.RATIO_18_1)
+motor_left1 = Motor(Ports.PORT1, GearSetting.RATIO_18_1)
+motor_left2 = Motor(Ports.PORT9, GearSetting.RATIO_18_1)
+motor_right1 = Motor(Ports.PORT2, GearSetting.RATIO_18_1, True )
+motor_right2 = Motor(Ports.PORT10, GearSetting.RATIO_18_1, True)
+motor_arm = Motor(Ports.PORT6, GearSetting.RATIO_18_1)
 
 # Function to drive forward
 def drive_forward(speed, duration):
@@ -19,7 +18,7 @@ def drive_forward(speed, duration):
     motor_right1.spin(FORWARD, speed, PERCENT)
     motor_right2.spin(FORWARD, speed, PERCENT)
     wait(duration, SECONDS)
-    motor_left1.stop()
+    motor_left1.stop() 
     motor_left2.stop()
     motor_right1.stop()
     motor_right2.stop()
