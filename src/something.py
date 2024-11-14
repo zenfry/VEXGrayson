@@ -61,10 +61,10 @@ def drive_control():
 
 # Arm joystick control
 def arm_control():
-    arm_speed = controller.ButtonR1.pressed()
+    arm_speed = controller.buttonR1.pressed(button_pressed)
     motor_arm.spin(FORWARD, arm_speed, PERCENT)
     
-    arm_speed = controller.ButtonL1.pressed()
+    arm_speed = controller.buttonL1.pressed(button_pressed)
     motor_arm.spin(REVERSE, arm_speed, PERCENT)
 
 # Autonomous routine
