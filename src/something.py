@@ -1,100 +1,109 @@
 from vex import *
 
-# Initialize Brain, Inertial, Controller, and Motors
+# Initialize Brain, Controller, and Motors
 Brain = Brain()
 Controller = Controller()
 
 # Motor setup for the left and right sides
-motor_left1 = Motor(Ports.PORT1)
-motor_left2 = Motor(Ports.PORT2)
-motor_left3 = Motor(Ports.PORT3)
-
-motor_right1 = Motor(Ports.PORT4, True)  # Reverse polarity for right side
-motor_right2 = Motor(Ports.PORT5, True)
-motor_right3 = Motor(Ports.PORT6, True)
+motor_left1 = Motor(Ports.PORT1, True)   # Clockwise
+motor_left2 = Motor(Ports.PORT2, True)   # Clockwise
+motor_right1 = Motor(Ports.PORT9)        # Counterclockwise
+motor_right2 = Motor(Ports.PORT10)       # Counterclockwise
 
 # Motor setup for the arm
-motor_arm = Motor(Ports.PORT7)  # Port 7, or any available port for the arm
+motor_arm = Motor(Ports.PORT7)           # Controls arm up/down
 
-# Competition instance
+# Speed variable for the wheels
+wheel_speed = 50  # Start with an initial speed of 50%
+autonomous_mode = False  # Tracks if the robot is in autonomous mode
 
-# Sample variable to demonstrate button actions
-myVariable = 0
-
-# Function for button events
-def button_actions():
-    global myVariable
-
-    # Button A - Example action
-    if Controller.buttonA.pressing():
-        myVariable += 1
-        Brain.screen.print("Button A pressed: {}".format(myVariable))
-
-    # Button B - Example action
-    if Controller.buttonB.pressing():
-        myVariable -= 1
-        Brain.screen.print("Button B pressed: {}".format(myVariable))
-
-    # Button X - Example action
-    if Controller.buttonX.pressing():
-        Brain.screen.print("Button X pressed")
-
-    # Button Y - Example action
-    if Controller.buttonY.pressing():
-        Brain.screen.print("Button Y pressed")
-
-    # Left Shoulder Button (L1) - Example action
+# Function to adjust wheel speed based on button presses
+def adjust_speed():
+    global wheel_speed
+    
+    # Increase speed with L1, capped at 100%
     if Controller.buttonL1.pressing():
-        Brain.screen.print("L1 pressed")
-
-    # Left Shoulder Button (L2) - Example action
+        wheel_speed = min(100, wheel_speed + 5)
+        Brain.screen.print("Speed increased to: {}".format(wheel_speed))
+    
+    # Decrease speed with L2, capped at 0%
     if Controller.buttonL2.pressing():
-        Brain.screen.print("L2 pressed")
-
-    # Right Shoulder Button (R1) - Example action
+        wheel_speed = max(0, wheel_speed - 5)
+        Brain.screen.print("Speed decreased to: {}".format(wheel_speed))
+    
+    # Stop all wheel motors when R1 is pressed
     if Controller.buttonR1.pressing():
-        Brain.screen.print("R1 pressed")
+        motor_left1.stop()
+        motor_left2.stop()
+        motor_right1.stop()
+        motor_right2.stop()
+        Brain.screen.print("Motors stopped")
+        return  # Exit function to prevent further spinning of motors
 
-    # Right Shoulder Button (R2) - Example action
-    if Controller.buttonR2.pressing():
-        Brain.screen.print("R2 pressed")
-
-# Function for controlling the robot wheels using joystick
+# Function for controlling the robot wheels using the left joystick
 def drive_control():
-    # Left side uses Axis3 (left vertical stick)
-    left_speed = Controller.axis3.position()
+    # Forward/backward speed from Axis 3 (left vertical stick)
+    forward_speed = Controller.axis3.position()
     
-    # Right side uses Axis2 (right vertical stick)
-    right_speed = Controller.axis2.position()
+    # Turning control from Axis 4 (left horizontal stick)
+    turn_speed = Controller.axis4.position()
     
-    # Set motor velocities
+    # Calculate speed for each side (left and right)
+    left_speed = (forward_speed + turn_speed) * (wheel_speed / 100)
+    right_speed = (forward_speed - turn_speed) * (wheel_speed / 100)
+    
+    # Set motor velocities with direction adjustments
     motor_left1.spin(FORWARD, left_speed, PERCENT)
     motor_left2.spin(FORWARD, left_speed, PERCENT)
-    motor_left3.spin(FORWARD, left_speed, PERCENT)
-
     motor_right1.spin(FORWARD, right_speed, PERCENT)
     motor_right2.spin(FORWARD, right_speed, PERCENT)
-    motor_right3.spin(FORWARD, right_speed, PERCENT)
 
-# Function for controlling the arm using joystick
+# Function for controlling the arm using the right joystick
 def arm_control():
-    # Use Axis4 (right horizontal stick) for arm control
-    arm_speed = Controller.axis4.position()
+    # Up/down control from Axis 2 (right vertical stick)
+    arm_speed = Controller.axis2.position()
     
-    # Set arm motor velocity based on joystick position
-    motor_arm.spin(FORWARD, arm_speed, PERCENT)
 
-# Autonomous task function (to be planned)
-def autonomous():
-    while competition.is_autonomous() and competition.is_enabled():
-        wait(10, MSEC)
+# Function to start autonomous mode
+def start_autonomous_mode():
+    global autonomous_mode
+    autonomous_mode = True
+    Brain.screen.print("Autonomous mode activated")
+    
+    # Autonomous actions (replace with your specific autonomous code)
+    motor_left1.spin(FORWARD, 50, PERCENT)
+    motor_left2.spin(FORWARD, 50, PERCENT)
+    motor_right1.spin(FORWARD, 50, PERCENT)
+    motor_right2.spin(FORWARD, 50, PERCENT)
+
+    # Wait for 17 seconds (autonomous mode duration)
+    wait(17, SECONDS)
+    
+    # Stop all motors after autonomous period
+    motor_left1.stop()
+    motor_left2.stop()
+    motor_right1.stop()
+    motor_right2.stop()
+    
+    # Return to driver control
+    autonomous_mode = False
+    Brain.screen.print("Returning to driver control")
+
+# Function to handle button actions
+def button_actions():
+    # Trigger autonomous mode with Button A
+    if Controller.buttonA.pressing() and not autonomous_mode:
+        start_autonomous_mode()
 
 # Driver control task function
 def driver_control():
     while competition.is_driver_control() and competition.is_enabled():
-        drive_control()   # Use joystick to drive the wheels
-        arm_control()     # Use joystick to control the arm
-        button_actions()  # Handle button presses
+        if not autonomous_mode:  # Only allow control if not in autonomous mode
+            adjust_speed()    # Adjust wheel speed with L1/L2 or stop with R1
+            drive_control()   # Use joystick to drive the wheels
+            arm_control()     # Use joystick to control the arm
+            button_actions()  # Handle button presses (for autonomous trigger)
         wait(20, MSEC)
 
-competition = Competition(driver_control,autonomous)
+# Competition instance
+competition = Competition(driver_control, autonomous)
