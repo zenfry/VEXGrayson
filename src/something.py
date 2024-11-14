@@ -43,9 +43,9 @@ def turn(direction, speed, duration):
 
 # Arm control
 def move_arm(position, speed, duration):
-    if position == "up":
+    if controller.buttonR1.pressed() == "up":
         motor_arm.spin(FORWARD, speed, PERCENT)
-    elif position == "down":
+    elif controller.buttonL1.pressed() == "down":
         motor_arm.spin(REVERSE, speed, PERCENT)
     wait(duration, SECONDS)
     motor_arm.stop()
@@ -61,10 +61,10 @@ def drive_control():
 
 # Arm joystick control
 def arm_control():
-    arm_speed = controller.buttonR1.pressed(button_pressed)
+    arm_speed = controller.buttonR1.pressed()
     motor_arm.spin(FORWARD, arm_speed, PERCENT)
     
-    arm_speed = controller.buttonL1.pressed(button_pressed)
+    arm_speed = controller.buttonL1.pressed()
     motor_arm.spin(REVERSE, arm_speed, PERCENT)
 
 # Autonomous routine
