@@ -7,9 +7,9 @@ controller = Controller()
 # Motor setup
 motor_left1 = Motor(Ports.PORT1, GearSetting.RATIO_18_1)
 motor_left2 = Motor(Ports.PORT9, GearSetting.RATIO_18_1)
-motor_right1 = Motor(Ports.PORT2, GearSetting.RATIO_18_1, True )
+motor_right1 = Motor(Ports.PORT2, GearSetting.RATIO_18_1, True)
 motor_right2 = Motor(Ports.PORT10, GearSetting.RATIO_18_1, True)
-motor_arm = Motor(Ports.PORT6, GearSetting.RATIO_18_1)
+motor_arm = Motor(Ports.PORT6)  # No gear ratio specified
 
 # Function to drive forward
 def drive_forward(speed, duration):
@@ -41,14 +41,14 @@ def turn(direction, speed, duration):
     motor_right1.stop()
     motor_right2.stop()
 
-# Arm control
-def move_arm(position, speed, duration):
-    if controller.buttonR1.pressed() == "up":
-        motor_arm.spin(FORWARD, speed, PERCENT)
-    elif controller.buttonL1.pressed() == "down":
-        motor_arm.spin(REVERSE, speed, PERCENT)
-    wait(duration, SECONDS)
-    motor_arm.stop()
+# Arm control using R1 and L1
+def arm_control():
+    if controller.buttonR1.pressed():
+        motor_arm.spin(FORWARD, 50, PERCENT)  # Move arm up
+    elif controller.buttonL1.pressed():
+        motor_arm.spin(REVERSE, 50, PERCENT)  # Move arm down
+    else:
+        motor_arm.stop()
 
 # Joystick drive control
 def drive_control():
@@ -59,26 +59,13 @@ def drive_control():
     motor_right1.spin(FORWARD, right_speed, PERCENT)
     motor_right2.spin(FORWARD, right_speed, PERCENT)
 
-# Arm joystick control
-def arm_control():
-    arm_speed = controller.buttonR1.pressed()
-    motor_arm.spin(FORWARD, arm_speed, PERCENT)
-    
-    arm_speed = controller.buttonL1.pressed()
-    motor_arm.spin(REVERSE, arm_speed, PERCENT)
-
 # Autonomous routine
 def autonomous():
     drive_forward(60, 1)
-    move_arm("up", 50, 1)
+    arm_control()  # Use arm control during autonomous if needed
     drive_forward(50, 1.5)
-    move_arm("down", 50, 1)
     turn("left", 50, 0.7)
     drive_forward(50, 1)
-    move_arm("up", 50, 1)
-    drive_forward(50, 1.5)
-    move_arm("down", 50, 1)
-    drive_forward(-50, 1)
 
 # Driver control loop
 def driver_control():
