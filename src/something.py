@@ -3,6 +3,7 @@ from vex import *
 # Initialize Brain, Controller, Competition, and Motors
 brain = Brain()
 controller = Controller()
+arm_control()
 
 # Motor setup
 motor_left1 = Motor(Ports.PORT1, GearSetting.RATIO_18_1)
@@ -69,7 +70,6 @@ def autonomous():
 def driver_control():
     while competition.is_driver_control() and competition.is_enabled():
         drive_control()
-        arm_control()
         wait(10, MSEC)
 
 # Run competition
