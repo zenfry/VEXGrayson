@@ -3,7 +3,6 @@ from vex import *
 # Initialize Brain, Controller, Competition, and Motors
 brain = Brain()
 controller = Controller()
-arm_control()
 
 # Motor setup
 motor_left1 = Motor(Ports.PORT1, GearSetting.RATIO_18_1)
@@ -45,7 +44,7 @@ def turn(direction, speed, duration):
 # Arm control using R1 and L1
 def arm_control():
     controller.buttonR1.pressed(lambda: motor_arm.spin(FORWARD, 50, PERCENT))
-    controller.buttonL1.pressed(lambda: motor_arm.spin(FORWARD, 50, PERCENT))
+    controller.buttonL1.pressed(lambda: motor_arm.spin(REVERSE, 50, PERCENT))
     controller.buttonR1.released( motor_arm.stop)
     controller.buttonL1.released( motor_arm.stop)
        
@@ -72,5 +71,6 @@ def driver_control():
         drive_control()
         wait(10, MSEC)
 
+arm_control()
 # Run competition
 competition = Competition(driver_control, autonomous)
