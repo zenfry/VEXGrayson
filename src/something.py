@@ -59,11 +59,35 @@ def drive_control():
     motor_right2.spin(FORWARD, right_speed, PERCENT)
 
 # Autonomous routine
+# Autonomous routine
 def autonomous():
-    drive_forward(60, 1)  # Use arm control during autonomous if needed
+    # Drive forward at 50% speed for 2 seconds
+    drive_forward(50, 2)
+
+    # Turn left at 30% speed for 1 second
+    turn("left", 30, 1)
+
+    # Drive forward again at 50% speed for 1.5 seconds
     drive_forward(50, 1.5)
-    turn("left", 50, 0.7)
-    drive_forward(50, 1)
+
+    # Raise the arm
+    motor_arm.spin(FORWARD, 50, PERCENT)
+    wait(1, SECONDS)  # Raise the arm for 1 second
+    motor_arm.stop()
+
+    # Turn right at 30% speed for 1 second
+    turn("right", 30, 1)
+
+    # Drive backward at 40% speed for 2 seconds
+    motor_left1.spin(REVERSE, 40, PERCENT)
+    motor_left2.spin(REVERSE, 40, PERCENT)
+    motor_right1.spin(REVERSE, 40, PERCENT)
+    motor_right2.spin(REVERSE, 40, PERCENT)
+    wait(2, SECONDS)
+    motor_left1.stop()
+    motor_left2.stop()
+    motor_right1.stop()
+    motor_right2.stop()
 
 # Driver control loop
 def driver_control():
