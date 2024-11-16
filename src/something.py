@@ -43,12 +43,11 @@ def turn(direction, speed, duration):
 
 # Arm control using R1 and L1
 def arm_control():
-    if controller.buttonR1.pressed():
-        motor_arm.spin(FORWARD, 50, PERCENT)  # Move arm up
-    elif controller.buttonL1.pressed():
-        motor_arm.spin(REVERSE, 50, PERCENT)  # Move arm down
-    else:
-        motor_arm.stop()
+    controller.buttonR1.pressed(lambda: motor_arm.spin(FORWARD, 50, PERCENT))
+    controller.buttonL1.pressed(lambda: motor_arm.spin(FORWARD, 50, PERCENT))
+    controller.buttonR1.released( motor_arm.stop)
+    controller.buttonL1.released( motor_arm.stop)
+       
 
 # Joystick drive control
 def drive_control():
