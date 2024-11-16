@@ -60,8 +60,7 @@ def drive_control():
 
 # Autonomous routine
 def autonomous():
-    drive_forward(60, 1)
-    arm_control()  # Use arm control during autonomous if needed
+    drive_forward(60, 1)  # Use arm control during autonomous if needed
     drive_forward(50, 1.5)
     turn("left", 50, 0.7)
     drive_forward(50, 1)
