@@ -1,4 +1,5 @@
 from vex import *
+import math
 
 # Initialize Brain, Controller, Competition, and Motors
 brain = Brain()
