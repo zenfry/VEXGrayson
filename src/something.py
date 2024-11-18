@@ -5,96 +5,65 @@ brain = Brain()
 controller = Controller()
 
 # Motor setup
-motor_left1 = Motor(Ports.PORT1, GearSetting.RATIO_18_1)
-motor_left2 = Motor(Ports.PORT9, GearSetting.RATIO_18_1)
+motor_left1 = Motor(Ports.PORT1, GearSetting.RATIO_18_1, False)
+motor_left2 = Motor(Ports.PORT9, GearSetting.RATIO_18_1, False)
 motor_right1 = Motor(Ports.PORT2, GearSetting.RATIO_18_1, True)
 motor_right2 = Motor(Ports.PORT10, GearSetting.RATIO_18_1, True)
 motor_arm = Motor(Ports.PORT6)  # No gear ratio specified
+drive_motors = {"motor_left1": left_1, "motor_left2": left_2, "motor_right1": right_1,
+                "motor_right2": right_2}
+left_group = MotorGroup(left_1, left_2)
+right_group = MotorGroup(right_1, right_2)
 
-# Function to drive forward
-def drive_forward(speed, duration):
-    motor_left1.spin(FORWARD, speed, PERCENT)
-    motor_left2.spin(FORWARD, speed, PERCENT)
-    motor_right1.spin(FORWARD, speed, PERCENT)
-    motor_right2.spin(FORWARD, speed, PERCENT)
-    wait(duration, SECONDS)
-    motor_left1.stop() 
-    motor_left2.stop()
-    motor_right1.stop()
-    motor_right2.stop()
+AUTO_SPEED = 20  # Default speed for autonomous driving
 
-# Function to turn
-def turn(direction, speed, duration):
-    if direction == "left":
-        motor_left1.spin(REVERSE, speed, PERCENT)
-        motor_left2.spin(REVERSE, speed, PERCENT)
-        motor_right1.spin(FORWARD, speed, PERCENT)
-        motor_right2.spin(FORWARD, speed, PERCENT)
-    elif direction == "right":
-        motor_left1.spin(FORWARD, speed, PERCENT)
-        motor_left2.spin(FORWARD, speed, PERCENT)
-        motor_right1.spin(REVERSE, speed, PERCENT)
-        motor_right2.spin(REVERSE, speed, PERCENT)
-    wait(duration, SECONDS)
-    motor_left1.stop()
-    motor_left2.stop()
-    motor_right1.stop()
-    motor_right2.stop()
 
-# Arm control using R1 and L1
+
+def driving(input_speed, input_turn):
+ # Calculate left and right motor speeds for arcade drive.
+    left = input_speed + input_turn
+    right = input_speed - input_turn
+    return left, right
+
+
+def driver():
+# Manual control using controller axes.
+    while True:
+        input_speed = cal(control.axis3.position())  # Forward/backward
+        input_turn = cal(control.axis1.position())     # Left/right turning
+        left_speed, right_speed = driving(input_speed, input_turn)
+        left_group.spin(FORWARD, left_speed, PERCENT)
+        right_group.spin(FORWARD, right_speed, PERCENT)
+
+
+def time_drive(time, direction):
+  #Drive forward or reverse for a set time in autonomous.
+    left_group.spin(direction, AUTO_SPEED, PERCENT)
+    right_group.spin(direction, AUTO_SPEED, PERCENT)
+    wait(time, MSEC)
+    left_group.stop()
+    right_group.stop()
+
+
+def drive_set():
+    left_group.spin(FORWARD, AUTO_SPEED, PERCENT)
+    right_group.spin(FORWARD, AUTO_SPEED, PERCENT)
+
+
+# Arm control
 def arm_control():
-    controller.buttonR1.pressed(lambda: motor_arm.spin(FORWARD, 50, PERCENT))
-    controller.buttonL1.pressed(lambda: motor_arm.spin(REVERSE, 50, PERCENT))
-    controller.buttonR1.released( motor_arm.stop)
-    controller.buttonL1.released( motor_arm.stop)
-       
+    control.buttonL1.pressed(lambda: motor_arm.spin(FORWARD, 50, PERCENT))
+    control.buttonL2.pressed(lambda: motor_arm.spin(REVERSE, 50, PERCENT))
+    control.buttonL1.released(motor_arm.stop)
+    control.buttonL2.released(motor_arm.stop)
 
-# Joystick drive control
-def drive_control():
-    left_speed = controller.axis3.position()
-    right_speed = controller.axis2.position()
-    motor_left1.spin(FORWARD, left_speed, PERCENT)
-    motor_left2.spin(FORWARD, left_speed, PERCENT)
-    motor_right1.spin(FORWARD, right_speed, PERCENT)
-    motor_right2.spin(FORWARD, right_speed, PERCENT)
-
-# Autonomous routine
-# Autonomous routine
-def autonomous():
-    # Drive forward at 50% speed for 2 seconds
-    drive_forward(50, 2)
-
-    # Turn left at 30% speed for 1 second
-    turn("left", 30, 1)
-
-    # Drive forward again at 50% speed for 1.5 seconds
-    drive_forward(50, 1.5)
-
-    # Raise the arm
-    motor_arm.spin(FORWARD, 50, PERCENT)
-    wait(1, SECONDS)  # Raise the arm for 1 second
-    motor_arm.stop()
-
-    # Turn right at 30% speed for 1 second
-    turn("right", 30, 1)
-
-    # Drive backward at 40% speed for 2 seconds
-    motor_left1.spin(REVERSE, 40, PERCENT)
-    motor_left2.spin(REVERSE, 40, PERCENT)
-    motor_right1.spin(REVERSE, 40, PERCENT)
-    motor_right2.spin(REVERSE, 40, PERCENT)
-    wait(2, SECONDS)
-    motor_left1.stop()
-    motor_left2.stop()
-    motor_right1.stop()
-    motor_right2.stop()
 
 # Driver control loop
 def driver_control():
     while competition.is_driver_control() and competition.is_enabled():
         drive_control()
         wait(10, MSEC)
-
+        
 arm_control()
-# Run competition
+
 competition = Competition(driver_control, autonomous)
